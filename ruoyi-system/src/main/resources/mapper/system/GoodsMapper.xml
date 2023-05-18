@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.GoodsMapper">
+
+    <resultMap type="Goods" id="GoodsResult">
+        <id     property="id"      column="id"      />
+        <result property="name"    column="name"    />
+        <result property="categoryId"     column="category_id"     />
+        <result property="pictureUrl"     column="picture_url"     />
+    </resultMap>
+
+    <sql id="selectGoodsVo">
+        select id, `name`, category_id, picture_url
+        from goods
+    </sql>
+
+    <!-- 查询条件 -->
+    <sql id="sqlwhereSearch">
+        <where>
+            <if test="id !=null">
+                and id = #{id}
+            </if>
+            <if test="name !=null">
+                and `name` = #{name}
+            </if>
+            <if test="categoryId !=null">
+                and category_id = #{categoryId}
+            </if>
+            <if test="pictureUrl !=null">
+                and picture_url = #{pictureUrl}
+            </if>
+        </where>
+    </sql>
+
+    <select id="select" parameterType="Collect" resultMap="GoodsResult">
+        <include refid="selectGoodsVo"/>
+        <include refid="sqlwhereSearch"/>
+    </select>
+
+    <insert id="insert" parameterType="Goods">
+        insert into goods (
+        <trim suffixOverrides=",">
+            <if test="name != null">`name`,</if>
+            <if test="categoryId != null">category_id,</if>
+            <if test="pictureUrl != null">picture_url,</if>
+        </trim>
+        )values(
+        <trim suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="categoryId != null">#{categoryId},</if>
+            <if test="pictureUrl != null">#{pictureUrl},</if>
+        </trim>
+        )
+    </insert>
+
+    <update id="update" parameterType="Goods">
+        update goods
+        <set>
+            <trim suffixOverrides=",">
+                <if test="name != null">`name` = #{name},</if>
+                <if test="categoryId != null">category_id = #{categoryId},</if>
+                <if test="pictureUrl != null">picture_url = #{pictureUrl},</if>
+            </trim>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="Integer">
+        delete from goods where id = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CategoryMapper">
+
+    <resultMap type="Category" id="CategoryResult">
+        <id     property="id"      column="id"      />
+        <result property="name"    column="name"    />
+        <result property="level"     column="level"     />
+        <result property="parent"   column="parent"   />
+    </resultMap>
+
+    <sql id="selectCategoryVo">
+        select id, `name`, `level`
+        from category
+    </sql>
+
+    <!-- 查询条件 -->
+    <sql id="sqlwhereSearch">
+        <where>
+            <if test="level !=null">
+                and `level` = #{level}
+            </if>
+            <if test="configKey !=null and configKey != ''">
+                and parent = #{parent}
+            </if>
+        </where>
+    </sql>
+
+    <select id="select" parameterType="Category" resultMap="CategoryResult">
+        <include refid="selectCategoryVo"/>
+        <include refid="sqlwhereSearch"/>
+    </select>
+
+    <insert id="insert" parameterType="Category">
+        insert into category (
+        <trim suffixOverrides=",">
+            <if test="name != null">`name`,</if>
+            <if test="level != null">`level`,</if>
+            <if test="parent != null">parent,</if>
+        </trim>
+        )values(
+        <trim suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="level != null">#{level},</if>
+            <if test="parent != null">#{parent},</if>
+        </trim>
+        )
+    </insert>
+
+    <update id="update" parameterType="SysConfig">
+        update category
+        <set>
+            <trim suffixOverrides=",">
+                <if test="name != null">`name` = #{name},</if>
+                <if test="level != null">`level` = #{level},</if>
+                <if test="parent != null">parent = #{parent},</if>
+            </trim>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="Integer">
+        delete from category where id = #{id}
+    </delete>
+</mapper>
