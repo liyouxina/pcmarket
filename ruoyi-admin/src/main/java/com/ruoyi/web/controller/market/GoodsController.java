@@ -49,4 +49,14 @@ public class GoodsController extends BaseController {
         }
         return toAjax(count);
     }
+
+    @GetMapping(value = { "/", "/{id}" })
+    public AjaxResult getInfo(@PathVariable(value = "id", required = false) Integer id)
+    {
+        AjaxResult ajax = AjaxResult.success();
+        Goods goods = new Goods();
+        goods.setId(id);
+        ajax.put(AjaxResult.DATA_TAG, goodsService.select(goods).get(0));
+        return ajax;
+    }
 }

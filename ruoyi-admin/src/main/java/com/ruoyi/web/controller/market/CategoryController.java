@@ -8,13 +8,17 @@ package com.ruoyi.web.controller.market;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.Category;
+import com.ruoyi.common.core.domain.entity.SysRole;
+import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.service.ICategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/market/category")
@@ -47,5 +51,15 @@ public class CategoryController extends BaseController {
             count += categoryService.deleteById(id);
         }
         return toAjax(count);
+    }
+
+    @GetMapping(value = { "/", "/{id}" })
+    public AjaxResult getInfo(@PathVariable(value = "id", required = false) Integer id)
+    {
+        AjaxResult ajax = AjaxResult.success();
+        Category category = new Category();
+        category.setId(id);
+        ajax.put(AjaxResult.DATA_TAG, categoryService.select(category).get(0));
+        return ajax;
     }
 }
