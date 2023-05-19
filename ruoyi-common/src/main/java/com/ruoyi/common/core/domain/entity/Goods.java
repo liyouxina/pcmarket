@@ -9,6 +9,7 @@ public class Goods {
 	private String name;
 	private Integer categoryId;
 	private String pictureUrl;
+	private String info;
 
 	public Integer getId() {
 		return id;
@@ -40,5 +41,13 @@ public class Goods {
 
 	public void setPictureUrl(String pictureUrl) {
 		this.pictureUrl = pictureUrl;
+	}
+
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
 	}
 }

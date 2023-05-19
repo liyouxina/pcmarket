@@ -19,7 +19,7 @@ export function updateGoods(data) {
 
 export function delGoods(ids) {
   return request({
-    url: '/market/goods/' + id,
+    url: '/market/goods/' + ids,
     method: 'delete'
   })
 }

@@ -8,11 +8,12 @@
         <id     property="id"      column="id"      />
         <result property="name"    column="name"    />
         <result property="categoryId"     column="category_id"     />
+        <result property="info"     column="info"     />
         <result property="pictureUrl"     column="picture_url"     />
     </resultMap>
 
     <sql id="selectGoodsVo">
-        select id, `name`, category_id, picture_url
+        select id, `name`, category_id, picture_url, info
         from goods
     </sql>
 
@@ -23,7 +24,7 @@
                 and id = #{id}
             </if>
             <if test="name !=null">
-                and `name` = #{name}
+                and `name` like concat('%',#{name,jdbcType=VARCHAR},'%')
             </if>
             <if test="categoryId !=null">
                 and category_id = #{categoryId}
@@ -45,12 +46,14 @@
             <if test="name != null">`name`,</if>
             <if test="categoryId != null">category_id,</if>
             <if test="pictureUrl != null">picture_url,</if>
+            <if test="info != null">info,</if>
         </trim>
         )values(
         <trim suffixOverrides=",">
             <if test="name != null">#{name},</if>
             <if test="categoryId != null">#{categoryId},</if>
             <if test="pictureUrl != null">#{pictureUrl},</if>
+            <if test="info != null">#{info},</if>
         </trim>
         )
     </insert>
@@ -62,6 +65,7 @@
                 <if test="name != null">`name` = #{name},</if>
                 <if test="categoryId != null">category_id = #{categoryId},</if>
                 <if test="pictureUrl != null">picture_url = #{pictureUrl},</if>
+                <if test="info != null">info = #{info},</if>
             </trim>
         </set>
         where id = #{id}

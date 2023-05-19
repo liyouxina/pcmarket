@@ -3,19 +3,19 @@
     <el-row :gutter="20">
       <el-col :span="24" :xs="24">
         <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item label="商品名称" prop="name">
+          <el-form-item label="分类名称" prop="name">
             <el-input
               v-model="queryParams.name"
-              placeholder="请输入商品名称"
+              placeholder="请输入分类名称"
               clearable
               style="width: 240px"
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="商品分类号" prop="categoryId">
+          <el-form-item label="父级分类" prop="categoryId">
             <el-input
-              v-model="queryParams.categoryId"
-              placeholder="请输入商品分类号"
+              v-model="queryParams.parent"
+              placeholder="请输入父级分类号"
               clearable
               style="width: 240px"
               @keyup.enter.native="handleQuery"
@@ -50,19 +50,15 @@
               v-hasPermi="['system:user:remove']"
             >删除</el-button>
           </el-col>
-          <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
+          <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
 
         <el-table v-loading="loading" :data="categoryList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="50" align="center" />
+          <el-table-column label="分类id" align="center" key="id" prop="id" />
           <el-table-column label="分类名称" align="center" key="name" prop="name" />
-          <el-table-column label="分类级别" align="center" key="categoryId" prop="userName" />
-          <el-table-column label="父级分类号" align="center" key="info" prop="nickName" />
-          <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
-            <template slot-scope="scope">
-              <span>{{ parseTime(scope.row.createTime) }}</span>
-            </template>
-          </el-table-column>
+          <el-table-column label="分类级别" align="center" key="level" prop="level" />
+          <el-table-column label="父级分类" align="center" key="parent" prop="parent" />
           <el-table-column
             label="操作"
             align="center"
@@ -99,37 +95,21 @@
       </el-col>
     </el-row>
 
-    <!-- 添加或修改用户配置对话框 -->
+    <!-- 添加或修改分类配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="商品名称" prop="phonenumber">
-              <el-input v-model="form.name" placeholder="请输入手机号码" maxlength="11" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="商品类别号" prop="email">
-              <el-input type="number" v-model="form.categoryId" placeholder="请输入商品类别号" maxlength="50" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="商品信息" prop="email">
-              <el-input v-model="form.info" placeholder="请输入商品信息" maxlength="50" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="商品图片链接" prop="email">
-              <el-input v-model="form.pictureUrl" placeholder="请输入商品图片链接" maxlength="50" />
-            </el-form-item>
-          </el-col>
-        </el-row>
+      <el-form ref="form" :model="form" :rules="rules" size="medium" label-width="100px">
+        <el-form-item label="分类名称" prop="name">
+          <el-input v-model="form.name" placeholder="请输入分类名称" show-word-limit clearable
+                    prefix-icon='el-icon-mobile' :style="{width: '100%'}"></el-input>
+        </el-form-item>
+        <el-form-item label="分类级别" prop="categoryId">
+          <el-input v-model="form.level" placeholder="请输入分类级别" clearable :style="{width: '100%'}">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="父级分类" prop="info">
+          <el-input v-model="form.parent" placeholder="请输入父级分类号" clearable :style="{width: '100%'}">
+          </el-input>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -141,7 +121,6 @@
 
 <script>
 import { listCategory, getCategory, delCategory, addCategory, updateCategory } from "@/api/system/category";
-//import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
   name: "Goods",
@@ -171,7 +150,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         name: undefined,
-        categoryId: undefined
+        level: undefined
       },
       rules: {}
     };
@@ -200,7 +179,7 @@ export default {
         id: undefined,
         name: undefined,
         level: undefined,
-        parentId: undefined
+        parent: undefined
       };
       this.resetForm("form");
     },
@@ -219,7 +198,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.userId);
+      this.ids = selection.map(item => item.id);
       this.single = selection.length != 1;
       this.multiple = !selection.length;
     },

@@ -12,17 +12,20 @@
     </resultMap>
 
     <sql id="selectCategoryVo">
-        select id, `name`, `level`
+        select id, `name`, `level`, parent
         from category
     </sql>
 
     <!-- 查询条件 -->
     <sql id="sqlwhereSearch">
         <where>
+            <if test="name !=null">
+                and `name` like concat('%',#{name,jdbcType=VARCHAR},'%')
+            </if>
             <if test="level !=null">
                 and `level` = #{level}
             </if>
-            <if test="configKey !=null and configKey != ''">
+            <if test="parent !=null and parent != ''">
                 and parent = #{parent}
             </if>
         </where>
@@ -49,7 +52,7 @@
         )
     </insert>
 
-    <update id="update" parameterType="SysConfig">
+    <update id="update" parameterType="Category">
         update category
         <set>
             <trim suffixOverrides=",">

@@ -13,7 +13,7 @@
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="商品分类号" prop="categoryId">
+          <el-form-item label="商品分类" prop="categoryId">
             <el-input
               v-model="queryParams.categoryId"
               placeholder="请输入商品分类号"
@@ -56,10 +56,11 @@
 
         <el-table v-loading="loading" :data="goodsList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="50" align="center" />
+          <el-table-column label="商品id" align="center" key="id" prop="id" />
           <el-table-column label="商品名称" align="center" key="name" prop="name" />
-          <el-table-column label="商品分类号" align="center" key="categoryId" prop="userName" :show-overflow-tooltip="true" />
-          <el-table-column label="商品信息" align="center" key="info" prop="nickName" :show-overflow-tooltip="true" />
-          <el-table-column label="商品图片链接" align="center" key="pictureUrl" prop="dept.deptName" :show-overflow-tooltip="true" />
+          <el-table-column label="商品分类号" align="center" key="categoryId" prop="categoryId" :show-overflow-tooltip="true" />
+          <el-table-column label="商品信息" align="center" key="info" prop="info" :show-overflow-tooltip="true" />
+          <el-table-column label="商品图片链接" align="center" key="pictureUrl" prop="pictureUrl" :show-overflow-tooltip="true" />
           <el-table-column
             label="操作"
             align="center"
@@ -96,37 +97,25 @@
       </el-col>
     </el-row>
 
-    <!-- 添加或修改用户配置对话框 -->
+    <!-- 添加或修改商品配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="商品名称" prop="phonenumber">
-              <el-input v-model="form.name" placeholder="请输入手机号码" maxlength="11" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="商品类别号" prop="email">
-              <el-input type="number" v-model="form.categoryId" placeholder="请输入商品类别号" maxlength="50" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="商品信息" prop="email">
-              <el-input v-model="form.info" placeholder="请输入商品信息" maxlength="50" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="商品图片链接" prop="email">
-              <el-input v-model="form.pictureUrl" placeholder="请输入商品图片链接" maxlength="50" />
-            </el-form-item>
-          </el-col>
-        </el-row>
+      <el-form ref="form" :model="form" :rules="rules" size="medium" label-width="100px">
+        <el-form-item label="商品名称" prop="name">
+          <el-input v-model="form.name" placeholder="请输入商品名称" show-word-limit clearable
+                    prefix-icon='el-icon-mobile' :style="{width: '100%'}"></el-input>
+        </el-form-item>
+        <el-form-item label="商品类别号" prop="categoryId">
+          <el-input v-model="form.categoryId" placeholder="请输入商品类别号" clearable :style="{width: '100%'}">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="商品信息" prop="info">
+          <el-input v-model="form.info" placeholder="请输入商品信息" clearable :style="{width: '100%'}">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="图片链接" prop="field103">
+          <el-input v-model="form.pictureUrl" placeholder="请输入图片链接" clearable :style="{width: '100%'}">
+          </el-input>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -138,7 +127,6 @@
 
 <script>
 import { listGoods, getGoods, delGoods, addGoods, updateGoods } from "@/api/system/goods";
-//import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
   name: "Goods",
@@ -170,14 +158,6 @@ export default {
         name: undefined,
         categoryId: undefined
       },
-      // 列信息
-      columns: [
-        { key: 0, label: `商品编号`, visible: true },
-        { key: 1, label: `商品名称`, visible: true },
-        { key: 2, label: `商品分类号`, visible: true },
-        { key: 3, label: `商品信息`, visible: true },
-        { key: 4, label: `商品图片链接`, visible: true }
-      ],
       // 表单校验
       rules: {}
     };
@@ -226,7 +206,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.userId);
+      this.ids = selection.map(item => item.id);
       this.single = selection.length != 1;
       this.multiple = !selection.length;
     },
