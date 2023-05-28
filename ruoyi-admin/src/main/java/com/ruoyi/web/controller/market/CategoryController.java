@@ -12,6 +12,7 @@ import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.system.response.CategoryListResp;
 import com.ruoyi.system.service.ICategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -31,6 +32,14 @@ public class CategoryController extends BaseController {
     {
         startPage();
         List<Category> list = categoryService.select(category);
+        return getDataTable(list);
+    }
+
+    @GetMapping("/listAll")
+    public TableDataInfo listAll(Category category)
+    {
+        startPage();
+        List<CategoryListResp> list = categoryService.selectAll(category);
         return getDataTable(list);
     }
 
